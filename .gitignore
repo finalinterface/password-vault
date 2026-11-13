@@ -1,0 +1,19 @@
+# Build & dependency directories
+target/
+project/target/
+project/project/target/
+
+# Metals & IDEs
+.metals/
+.bloop/
+.bsp/
+.idea/
+.vscode/
+
+# Local environment & secrets
+.env
+*.csv
+
+# OS files
+.DS_Store
+Thumbs.db

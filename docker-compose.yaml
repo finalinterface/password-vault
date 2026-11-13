@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    container_name: password-vault-db
+    environment:
+      POSTGRES_DB: password_vault
+      POSTGRES_USER: password_vault
+      POSTGRES_PASSWORD: password_vault
+    ports:
+      - "5432:5432"
+    volumes:
+      - password-vault-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U password_vault -d password_vault"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: password-vault-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/password_vault
+      DB_USER: password_vault
+      DB_PASSWORD: password_vault
+      MASTER_KEY_BASE64: ${MASTER_KEY_BASE64:?MASTER_KEY_BASE64 is not set, copy .env.example to .env}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is not set, copy .env.example to .env}
+    ports:
+      - "8080:8080"
+
+volumes:
+  password-vault-db-data:
